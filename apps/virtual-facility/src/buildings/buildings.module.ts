@@ -11,9 +11,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'WORKFLOWS_SERVICE',
-        transport: Transport.NATS,
+        transport: Transport.RMQ, // 👈
         options: {
-          servers: [process.env.NATS_URL || 'nats://nats:4222'],
+          urls: [
+            process.env.RABBITMQ_URL ?? 'amqp://guest:guest@rabbitmq:5672',
+          ], // 👈
+          queue: 'workflows_queue',
+          queueOptions: { durable: false },
         },
       },
     ]),

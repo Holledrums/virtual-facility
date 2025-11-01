@@ -1,1 +1,2 @@
-export const MESSAGE_BROKER = Symbol('messager-broker');
+export const NATS_MESSAGE_BROKER = Symbol('nats-messager-broker');
+export const NOTIFICATIONS_SERVICE = Symbol('notifications-service');

@@ -1,9 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller, Inject, Logger } from '@nestjs/common';
 import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import { NATS_MESSAGE_BROKER, NOTIFICATIONS_SERVICE } from './constants';
 import { lastValueFrom } from 'rxjs';
 
+interface AlarmData {
+  name: string;
+  buildingId: number;
+}
+
+interface AlarmClassification {
+  category: string;
+  severity: number;
+}
 @Controller()
 export class AlarmsServiceController {
   private readonly logger = new Logger(AlarmsServiceController.name);
@@ -16,7 +24,7 @@ export class AlarmsServiceController {
   ) {}
 
   @EventPattern('alarm.created')
-  async create(@Payload() data: { name: string; buildingId: number }) {
+  async create(@Payload() data: AlarmData) {
     this.logger.debug(
       `Received new "alarm.created" event: ${JSON.stringify(data)}`,
     );
@@ -28,10 +36,10 @@ export class AlarmsServiceController {
     // 2. "Alarm classifier service" would classify the alarm and emit an event to the "Notifications service" to notify other services about the alarm.
     // 3. "Notifications service" would subscribe to the "alarm.classified" event and notify other services about the alarm.
     const alarmClassification = await lastValueFrom(
-      this.natsMessageBroker.send('alarm.classify', data),
+      this.natsMessageBroker.send<AlarmClassification>('alarm.classify', data),
     );
     this.logger.debug(
-      `Alarm "${data.name}" classified as ${alarmClassification}`,
+      `Alarm "${data.name}" classified as  ${JSON.stringify(alarmClassification)}`,
     );
 
     const notify$ = this.notificationsService.emit('notification.send', {

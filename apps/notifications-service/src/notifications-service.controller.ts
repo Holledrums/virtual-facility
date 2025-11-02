@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { Channel, ConsumeMessage } from 'amqplib';
 
 @Controller()
 export class NotificationsServiceController {
@@ -17,8 +15,8 @@ export class NotificationsServiceController {
     this.logger.debug(
       `Sending notification about the alarm: ${JSON.stringify(data)}`,
     );
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
+    const channel = context.getChannelRef() as Channel;
+    const originalMsg = context.getMessage() as ConsumeMessage;
     if (originalMsg.fields.redelivered) {
       this.logger.verbose(
         `Message was already redelivered. Acknoledging the message and discarding it.`,

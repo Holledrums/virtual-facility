@@ -10,6 +10,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { Outbox } from '../outbox/entities/outbox.entity';
 import { WORKFLOWS_SERVICE } from '../constance';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class BuildingsService {
@@ -47,6 +48,7 @@ export class BuildingsService {
       const newBuildingEntity = await buildingsRepository.save(building);
 
       await outboxRepository.save({
+        messageId: randomUUID(),
         type: 'workflows.create',
         payload: {
           name: 'My workflow',

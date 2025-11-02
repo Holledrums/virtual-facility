@@ -18,12 +18,10 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/workflows": [
-        "libs/workflows/src"
-      ],
-      "@app/workflows/*": [
-        "libs/workflows/src/*"
-      ]
+      "@app/workflows": ["libs/workflows/src"],
+      "@app/workflows/*": ["libs/workflows/src/*"],
+      "@app/common": ["libs/common/src"],
+      "@app/common/*": ["libs/common/src/*"]
     }
   }
 }
